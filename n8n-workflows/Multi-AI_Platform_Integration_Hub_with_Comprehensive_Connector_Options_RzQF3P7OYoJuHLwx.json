@@ -1,0 +1,1381 @@
+{
+  "updatedAt": "2025-12-15T14:00:09.381Z",
+  "createdAt": "2025-12-11T22:18:40.691Z",
+  "id": "RzQF3P7OYoJuHLwx",
+  "name": "Multi-AI Platform Integration Hub with Comprehensive Connector Options",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "964ff7d7-61ae-4fa4-a75b-6fd34ab1145f",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "aiPlatform",
+              "value": "openai",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "userPrompt",
+              "value": "Your question or task here",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "2f6c333f-09b3-4a66-90ed-3ebbd16b2dc1",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -496,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "openai",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "OpenAI"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "claude",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Claude"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "gemini",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Gemini"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "azure",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Azure"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "cohere",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cohere"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "huggingface",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HuggingFace"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "mistral",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mistral"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "groq",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Groq"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "ollama",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Ollama"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9fc20dba-7d3b-450f-bfd6-e09d36d20b2a",
+      "name": "Select AI Platform",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -272,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "message"
+      },
+      "id": "ba22f008-5d3e-4a51-804b-ca7696cd7a54",
+      "name": "OpenAI GPT",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        400,
+        48
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "m99AwxO5mNlwLtaw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-3-5-sonnet-20241022"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.userPrompt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bc4cf901-731b-4561-a151-c6e358ff874d",
+      "name": "Anthropic Claude",
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        400,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gemini-1.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.userPrompt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "299d87b3-ca28-4bd9-a6ad-d1215b829c24",
+      "name": "Google Gemini",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        400,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "2692e760-6e75-4d76-8377-1e534816b40a",
+      "name": "Azure OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        1056
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userPrompt }}",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant with access to various tools. Use the available tools to help answer questions and complete tasks effectively."
+        }
+      },
+      "id": "d5fc4a38-135d-4f82-82ee-ccfe1c56f247",
+      "name": "Azure OpenAI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        400,
+        832
+      ]
+    },
+    {
+      "parameters": {
+        "model": "command-r-plus",
+        "options": {}
+      },
+      "id": "24e0eae9-1cbd-4031-8d92-fb4503702ec7",
+      "name": "Cohere Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatCohere",
+      "typeVersion": 1,
+      "position": [
+        464,
+        1456
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userPrompt }}",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant with access to various tools. Use the available tools to help answer questions and complete tasks effectively."
+        }
+      },
+      "id": "8a5b0ca8-7b0e-49e7-898e-98a9d142c6a8",
+      "name": "Cohere Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        400,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "model": "<__PLACEHOLDER_VALUE__HuggingFace Model ID (e.g., meta-llama/Llama-2-70b-chat-hf)__>",
+        "options": {}
+      },
+      "id": "a10ad933-6d01-4c35-80af-7b31432ca96e",
+      "name": "HuggingFace Model",
+      "type": "@n8n/n8n-nodes-langchain.lmOpenHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        3056
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userPrompt }}",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant with access to various tools. Use the available tools to help answer questions and complete tasks effectively."
+        }
+      },
+      "id": "cc760e45-04b9-494d-9bf9-ccbc9bb1a881",
+      "name": "HuggingFace Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        400,
+        1632
+      ]
+    },
+    {
+      "parameters": {
+        "model": "mistral-large-latest",
+        "options": {}
+      },
+      "id": "eb27b9cc-ac17-40b1-94f6-68e4f4e9906f",
+      "name": "Mistral Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        464,
+        2048
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userPrompt }}",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant with access to various tools. Use the available tools to help answer questions and complete tasks effectively."
+        }
+      },
+      "id": "37d52ac6-abf6-493c-a89e-222fc4897022",
+      "name": "Mistral Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        400,
+        1824
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "id": "c72f44f1-1c8b-4d6e-8437-f5f01f39077a",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        464,
+        2448
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userPrompt }}",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant with access to various tools. Use the available tools to help answer questions and complete tasks effectively."
+        }
+      },
+      "id": "e3e87345-6e11-4d29-90fa-7e09d9ac08c9",
+      "name": "Groq Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        400,
+        2224
+      ]
+    },
+    {
+      "parameters": {
+        "model": "<__PLACEHOLDER_VALUE__Ollama Model Name (e.g., llama2, mistral)__>",
+        "options": {}
+      },
+      "id": "be7f6545-ceb0-419c-8efe-f4dfdeb84ef8",
+      "name": "Ollama Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        464,
+        2960
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userPrompt }}",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant with access to various tools. Use the available tools to help answer questions and complete tasks effectively."
+        }
+      },
+      "id": "3f1059b0-29e3-4f62-8719-116ad7ac5838",
+      "name": "Ollama Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        400,
+        2736
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e1af7cc4-fb95-45a2-9254-3983012a393c",
+      "name": "Calculator Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "description": "Execute custom JavaScript or Python code to perform calculations or data transformations",
+        "jsCode": "const input = $fromAI(\"code_input\");\nreturn { result: eval(input) };"
+      },
+      "id": "f0e57ed1-d1da-4272-8841-313eae73e417",
+      "name": "Code Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Make HTTP requests to external APIs",
+        "url": "={{ $fromAI(\"api_url\") }}",
+        "options": {}
+      },
+      "id": "e9ada03b-66a0-44f9-adfb-08de51ea7e35",
+      "name": "HTTP Request Tool",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI('recipient_email') }}",
+        "subject": "={{ $fromAI('email_subject') }}",
+        "message": "={{ $fromAI('email_body') }}",
+        "options": {}
+      },
+      "id": "d13270be-2131-4a66-8faf-2cb4f05763a1",
+      "name": "Gmail Tool",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        336,
+        272
+      ],
+      "webhookId": "469e2793-a918-4e9e-aa7b-7b6662c06e62",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "w5Bkx9KNgceO6ztH",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $fromAI('channel_name') }}"
+        },
+        "text": "={{ $fromAI('message_text') }}",
+        "otherOptions": {}
+      },
+      "id": "1185315a-6dc8-4641-8aa9-160815cf4d00",
+      "name": "Slack Tool",
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.3,
+      "position": [
+        464,
+        272
+      ],
+      "webhookId": "86f4bc45-27a1-465e-ac67-24633c300929",
+      "credentials": {
+        "slackApi": {
+          "id": "qKrD8fb7lCVqUkPX",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $fromAI('spreadsheet_id') }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $fromAI('sheet_name') }}"
+        },
+        "options": {}
+      },
+      "id": "4b018d49-50d2-498e-99dc-fc9a86edfedc",
+      "name": "Google Sheets Tool",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        272
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h3bwraZmRpFZkFlc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $fromAI(\"calendar_id\", \"Calendar ID\", \"string\", \"primary\") }}"
+        },
+        "start": "={{ $fromAI(\"start_time\") }}",
+        "end": "={{ $fromAI(\"end_time\") }}",
+        "additionalFields": {
+          "summary": "={{ $fromAI(\"event_title\") }}"
+        }
+      },
+      "id": "dde7260f-3ecb-431f-9447-f644ceb7fdb2",
+      "name": "Google Calendar Tool",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "pageId": {
+          "__rl": true,
+          "mode": "url",
+          "value": ""
+        },
+        "options": {}
+      },
+      "id": "fad5c05d-f8d5-4233-8aba-15ddada21a99",
+      "name": "Notion Tool",
+      "type": "n8n-nodes-base.notionTool",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $fromAI('base_id') }}"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $fromAI('table_id') }}"
+        },
+        "options": {}
+      },
+      "id": "0e04c6da-a297-4fc8-be26-8c273ad5e630",
+      "name": "Airtable Tool",
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        976,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "sessionKey": "={{ $json.sessionId || \"default\" }}"
+      },
+      "id": "d595a3a3-816d-4614-8c9a-bb1720018991",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        1056
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Select AI Platform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select AI Platform": {
+      "main": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Anthropic Claude",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cohere Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HuggingFace Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mistral Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Groq Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ollama Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Azure OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cohere Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Cohere Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Mistral Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Groq Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ollama Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Google Gemini",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Cohere Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "HuggingFace Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Mistral Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Groq Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ollama Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Google Gemini",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Cohere Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "HuggingFace Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Mistral Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Groq Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ollama Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Google Gemini",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Cohere Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "HuggingFace Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Mistral Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Groq Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ollama Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Google Gemini",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Cohere Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "HuggingFace Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Mistral Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Groq Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ollama Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Google Gemini",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Cohere Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "HuggingFace Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Mistral Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Groq Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ollama Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Google Gemini",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Cohere Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "HuggingFace Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Mistral Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Groq Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ollama Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Google Gemini",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Cohere Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "HuggingFace Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Mistral Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Groq Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ollama Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Google Gemini",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Cohere Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "HuggingFace Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Mistral Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Groq Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ollama Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Google Gemini",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Cohere Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "HuggingFace Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Mistral Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Groq Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Ollama Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Azure OpenAI Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Cohere Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "HuggingFace Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Mistral Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Groq Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Ollama Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "67be90eb-615e-46ea-8063-6bc0231daa50",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-15T13:56:55.060Z",
+      "createdAt": "2025-12-15T13:56:55.060Z",
+      "role": "workflow:owner",
+      "workflowId": "RzQF3P7OYoJuHLwx",
+      "projectId": "Mm7bXtgXc4UKgIPL"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

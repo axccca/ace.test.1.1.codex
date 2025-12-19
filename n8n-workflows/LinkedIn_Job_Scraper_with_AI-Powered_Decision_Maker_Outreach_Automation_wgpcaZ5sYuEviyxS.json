@@ -1,0 +1,630 @@
+{
+  "updatedAt": "2025-11-12T07:38:51.000Z",
+  "createdAt": "2025-11-06T07:27:34.924Z",
+  "id": "wgpcaZ5sYuEviyxS",
+  "name": "LinkedIn Job Scraper with AI-Powered Decision Maker Outreach Automation",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "f148cdde-5c9a-45b4-aea1-31e267905559",
+      "name": "Daily Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2064,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "apifyApiToken",
+              "value": "<__PLACEHOLDER_VALUE__Apify API Token__>",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "apifyActorId",
+              "value": "<__PLACEHOLDER_VALUE__Apify LinkedIn Job Scraper Actor ID__>",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "apolloApiKey",
+              "value": "<__PLACEHOLDER_VALUE__Apollo.io API Key__>",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "jobRoles",
+              "value": "<__PLACEHOLDER_VALUE__Comma-separated job roles to search (e.g., Software Engineer, Product Manager)__>",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "jobLocations",
+              "value": "<__PLACEHOLDER_VALUE__Comma-separated locations (e.g., San Francisco, New York, Remote)__>",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "notionDatabaseId",
+              "value": "<__PLACEHOLDER_VALUE__Notion Database ID__>",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "googleSheetsId",
+              "value": "<__PLACEHOLDER_VALUE__Google Sheets Spreadsheet ID__>",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "9f46cc89-7907-48d9-9385-a889e28c5e70",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1840,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.apify.com/v2/acts/{{ $('Workflow Configuration').first().json.apifyActorId }}/runs?token={{ $('Workflow Configuration').first().json.apifyApiToken }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"startUrls\": [{ \"url\": \"https://www.linkedin.com/jobs/search/\" }], \"searchKeywords\": $('Workflow Configuration').first().json.jobRoles, \"searchLocation\": $('Workflow Configuration').first().json.jobLocations, \"maxItems\": 50 }",
+        "options": {}
+      },
+      "id": "765ea803-dcc3-4559-9cb8-c186bda6f4c2",
+      "name": "Apify - Run LinkedIn Job Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1616,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.data.defaultDatasetId ? 'https://api.apify.com/v2/datasets/' + $json.data.defaultDatasetId + '/items?token=' + $('Workflow Configuration').first().json.apifyApiToken : '' }}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "018744f8-28ad-4ac1-80ec-41ddc23ed17d",
+      "name": "Apify - Get Scraper Results",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1392,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Apify results and extract job details\nconst items = $input.all();\nconst jobPostings = [];\n\n// Iterate through all input items\nfor (const item of items) {\n  // Check if the item has the expected structure from Apify\n  const data = item.json;\n  \n  // Handle different possible data structures from Apify\n  let jobs = [];\n  \n  if (Array.isArray(data)) {\n    jobs = data;\n  } else if (data.items && Array.isArray(data.items)) {\n    jobs = data.items;\n  } else if (data.results && Array.isArray(data.results)) {\n    jobs = data.results;\n  } else if (data.data && Array.isArray(data.data)) {\n    jobs = data.data;\n  } else {\n    // If single job object, wrap in array\n    jobs = [data];\n  }\n  \n  // Extract job details from each job posting\n  for (const job of jobs) {\n    const jobPosting = {\n      companyName: job.companyName || job.company || job.companyTitle || '',\n      jobTitle: job.title || job.jobTitle || job.position || '',\n      location: job.location || job.jobLocation || job.place || '',\n      postingDate: job.postedAt || job.postingDate || job.listedAt || job.date || '',\n      salary: job.salary || job.salaryRange || job.compensation || '',\n      jobUrl: job.url || job.jobUrl || job.link || job.jobLink || '',\n      description: job.description || job.jobDescription || job.descriptionText || ''\n    };\n    \n    // Only add if we have at least a job title or company name\n    if (jobPosting.jobTitle || jobPosting.companyName) {\n      jobPostings.push({ json: jobPosting });\n    }\n  }\n}\n\n// Return one item per job posting\nreturn jobPostings;"
+      },
+      "id": "c700f622-1981-44c5-bd29-d36799472e78",
+      "name": "Parse Job Postings",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1168,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apollo.io/v1/mixed_people/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Api-Key",
+              "value": "={{ $('Workflow Configuration').first().json.apolloApiKey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"organization_name\": $json.company, \"person_titles\": [\"HR\", \"Human Resources\", \"Talent Acquisition\", \"Recruiter\", \"Recruiting\", \"People Operations\", \"Operations\", \"Hiring Manager\"], \"page\": 1, \"per_page\": 10 }",
+        "options": {}
+      },
+      "id": "e2dc8453-8171-4c5c-a2be-f6b41c2abe08",
+      "name": "Apollo - Find Decision Makers",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -944,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Rank decision makers by relevance\nconst jobData = $input.item.json;\nconst decisionMakers = jobData.decisionMakers || [];\nconst jobLocation = jobData.jobLocation || '';\n\n// Define scoring weights\nconst titleKeywords = {\n  'recruiter': 10,\n  'talent': 10,\n  'hr': 10,\n  'human resources': 10,\n  'people': 8,\n  'hiring': 9,\n  'recruitment': 10,\n  'talent acquisition': 12\n};\n\nconst seniorityKeywords = {\n  'director': 15,\n  'vp': 20,\n  'vice president': 20,\n  'head': 18,\n  'chief': 25,\n  'cpo': 25,\n  'chro': 25,\n  'senior': 10,\n  'lead': 8,\n  'manager': 5\n};\n\n// Function to calculate relevance score\nfunction calculateRelevanceScore(person) {\n  let score = 0;\n  const title = (person.title || '').toLowerCase();\n  const location = (person.location || '').toLowerCase();\n  const jobLoc = jobLocation.toLowerCase();\n  \n  // Score based on title keywords\n  for (const [keyword, points] of Object.entries(titleKeywords)) {\n    if (title.includes(keyword)) {\n      score += points;\n    }\n  }\n  \n  // Score based on seniority level\n  for (const [keyword, points] of Object.entries(seniorityKeywords)) {\n    if (title.includes(keyword)) {\n      score += points;\n    }\n  }\n  \n  // Score based on location match\n  if (location && jobLoc) {\n    // Extract city/state from locations for comparison\n    const locationParts = location.split(',').map(p => p.trim());\n    const jobLocParts = jobLoc.split(',').map(p => p.trim());\n    \n    // Check for any matching location parts\n    for (const locPart of locationParts) {\n      for (const jobPart of jobLocParts) {\n        if (locPart && jobPart && (locPart.includes(jobPart) || jobPart.includes(locPart))) {\n          score += 15;\n          break;\n        }\n      }\n    }\n  }\n  \n  return score;\n}\n\n// Calculate scores for all decision makers\nconst scoredDecisionMakers = decisionMakers.map(person => ({\n  ...person,\n  relevanceScore: calculateRelevanceScore(person)\n}));\n\n// Sort by relevance score (highest first) and take top 3\nconst topDecisionMakers = scoredDecisionMakers\n  .sort((a, b) => b.relevanceScore - a.relevanceScore)\n  .slice(0, 3)\n  .map(person => ({\n    name: person.name || '',\n    title: person.title || '',\n    linkedinProfile: person.linkedinUrl || person.linkedin || '',\n    email: person.email || '',\n    location: person.location || '',\n    relevanceScore: person.relevanceScore\n  }));\n\n// Return the result with top decision makers\nreturn {\n  json: {\n    ...jobData,\n    topDecisionMakers: topDecisionMakers,\n    totalDecisionMakersFound: decisionMakers.length\n  }\n};"
+      },
+      "id": "88697874-89ae-4409-aa8a-d6e48c6b5a19",
+      "name": "Rank Decision Makers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "message"
+      },
+      "id": "4b15bb2b-303a-463d-aef0-68bddfd02670",
+      "name": "OpenAI - Generate Psychographic Profile",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "message"
+      },
+      "id": "52f35653-dd97-43b4-8eeb-2fe68bd2534c",
+      "name": "OpenAI - Generate Outreach Hook",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "psychographicProfile",
+              "value": "={{ $('OpenAI - Generate Psychographic Profile').first().json.message.content }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "outreachHooks",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "53d894bb-0b8c-4227-a437-2f9d629d06eb",
+      "name": "Prepare Notion Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').first().json.notionDatabaseId }}"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Job Title|title",
+              "type": "title",
+              "title": "={{ $json.jobTitle }}"
+            },
+            {
+              "key": "Company|rich_text",
+              "type": "rich_text",
+              "textContent": "={{ $json.company }}"
+            },
+            {
+              "key": "Location|rich_text",
+              "type": "rich_text",
+              "textContent": "={{ $json.location }}"
+            },
+            {
+              "key": "Posting Date|date",
+              "type": "date",
+              "includeTime": false,
+              "date": "={{ $json.postingDate }}"
+            },
+            {
+              "key": "Salary|rich_text",
+              "type": "rich_text",
+              "textContent": "={{ $json.salary }}"
+            },
+            {
+              "key": "Job URL|url",
+              "type": "url",
+              "urlValue": "={{ $json.jobUrl }}"
+            },
+            {
+              "key": "Decision Maker Name|rich_text",
+              "type": "rich_text",
+              "textContent": "={{ $json.decisionMaker.name }}"
+            },
+            {
+              "key": "Decision Maker Title|rich_text",
+              "type": "rich_text",
+              "textContent": "={{ $json.decisionMaker.title }}"
+            },
+            {
+              "key": "Decision Maker LinkedIn|url",
+              "type": "url",
+              "urlValue": "={{ $json.decisionMaker.linkedinUrl }}"
+            },
+            {
+              "key": "Psychographic Profile|rich_text",
+              "type": "rich_text",
+              "textContent": "={{ $json.psychographicProfile }}"
+            },
+            {
+              "key": "Outreach Hooks|rich_text",
+              "type": "rich_text",
+              "textContent": "={{ $json.outreachHooks }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ac4862a8-3368-4bca-abd3-74efe3736eac",
+      "name": "Notion - Create Job Entry",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').first().json.googleSheetsId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Job Postings"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "Job Title": "={{ $json.jobTitle }}",
+            "Company": "={{ $json.company }}",
+            "Location": "={{ $json.location }}",
+            "Posting Date": "={{ $json.postingDate }}",
+            "Salary": "={{ $json.salary }}",
+            "Job URL": "={{ $json.jobUrl }}",
+            "Decision Maker Name": "={{ $json.decisionMakerName }}",
+            "Decision Maker Title": "={{ $json.decisionMakerTitle }}",
+            "Decision Maker LinkedIn": "={{ $json.decisionMakerLinkedIn }}",
+            "Psychographic Profile": "={{ $json.psychographicProfile }}",
+            "Outreach Hooks": "={{ $json.outreachHooks }}",
+            "Timestamp": "={{ $json.timestamp }}"
+          },
+          "matchingColumns": [
+            "Job Title",
+            "Company",
+            "Location",
+            "Posting Date",
+            "Salary",
+            "Job URL",
+            "Decision Maker Name",
+            "Decision Maker Title",
+            "Decision Maker LinkedIn",
+            "Psychographic Profile",
+            "Outreach Hooks",
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Posting Date",
+              "displayName": "Posting Date",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Salary",
+              "displayName": "Salary",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job URL",
+              "displayName": "Job URL",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker Name",
+              "displayName": "Decision Maker Name",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker Title",
+              "displayName": "Decision Maker Title",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker LinkedIn",
+              "displayName": "Decision Maker LinkedIn",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Psychographic Profile",
+              "displayName": "Psychographic Profile",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Outreach Hooks",
+              "displayName": "Outreach Hooks",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b5ab8cc9-b993-40ce-a46b-72262d80107c",
+      "name": "Google Sheets - Append Results",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        288
+      ]
+    }
+  ],
+  "connections": {
+    "Daily Schedule": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Apify - Run LinkedIn Job Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify - Run LinkedIn Job Scraper": {
+      "main": [
+        [
+          {
+            "node": "Apify - Get Scraper Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apify - Get Scraper Results": {
+      "main": [
+        [
+          {
+            "node": "Parse Job Postings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Job Postings": {
+      "main": [
+        [
+          {
+            "node": "Apollo - Find Decision Makers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apollo - Find Decision Makers": {
+      "main": [
+        [
+          {
+            "node": "Rank Decision Makers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rank Decision Makers": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Generate Psychographic Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Generate Psychographic Profile": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Generate Outreach Hook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Generate Outreach Hook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Notion Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Notion Data": {
+      "main": [
+        [
+          {
+            "node": "Notion - Create Job Entry",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Sheets - Append Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Daily Schedule": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "60379324-097b-45fc-b0bd-2c1a710ea8d7",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-11-06T07:27:34.926Z",
+      "createdAt": "2025-11-06T07:27:34.926Z",
+      "role": "workflow:owner",
+      "workflowId": "wgpcaZ5sYuEviyxS",
+      "projectId": "uYtNtwSdnjBjYtuu"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

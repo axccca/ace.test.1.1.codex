@@ -1,0 +1,1009 @@
+{
+  "updatedAt": "2025-11-25T10:53:00.000Z",
+  "createdAt": "2025-11-25T07:28:35.615Z",
+  "id": "gJjqf6fYQBlQFrjP",
+  "name": "My workflow 2",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "id": "2c31aa2a-eacd-4df1-ac5f-f19d497de7c1",
+      "name": "Every Few Minutes Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        3456
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "newsApiUrl",
+              "value": "https://newsapi.org/v2/top-headlines",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "newsApiKey",
+              "value": "1325830db8cc41e9b1516bb68f67899b",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "trendApiUrl",
+              "value": "https://api.example.com/trends",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "recipientEmail",
+              "value": "info.adixy@gmail.com",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "slackChannel",
+              "value": "https://app.slack.com/huddle/T09V1HA7822/C0A02G2NWTT",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "crmApiUrl",
+              "value": "<__PLACEHOLDER_VALUE__CRM API Endpoint__>",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "crmApiKey",
+              "value": "<__PLACEHOLDER_VALUE__CRM API Key__>",
+              "type": "string"
+            },
+            {
+              "id": "id-9",
+              "name": "crmSheetId",
+              "value": "<__PLACEHOLDER_VALUE__CRM Google Sheet ID__>",
+              "type": "string"
+            },
+            {
+              "id": "id-10",
+              "name": "leadScoreThreshold",
+              "value": 75,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "c94c25d1-f961-433c-afd2-8f4b1e3f745d",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -192,
+        3456
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Workflow Configuration').first().json.newsApiUrl }}?country=us&apiKey={{ $('Workflow Configuration').first().json.newsApiKey }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "n8n-workflow"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "41411815-975c-444e-88ae-3c8324df1670",
+      "name": "Fetch Real-Time World Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        32,
+        3456
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.articles }}",
+        "options": {
+          "systemMessage": "You are a Master Prompt Architect specialized in generating high-quality, actionable prompts for various automation use cases.\n\nYour task is to:\n1. Analyze the real-time world data provided (news articles, trends, events)\n2. Generate 3-5 creative, detailed prompts that can be used for:\n   - Lead nurturing campaigns\n   - Content creation (blog posts, social media, emails)\n   - Trend analysis and insights\n   - Customer outreach strategies\n   - Data enrichment workflows\n\nFor each prompt, provide:\n- **Title**: A clear, descriptive title\n- **Category**: The use case (lead nurturing, content creation, trend analysis, outreach, data enrichment)\n- **Prompt**: A detailed, actionable prompt that includes context, instructions, and expected output format\n- **Context**: Brief explanation of why this prompt is relevant based on current trends\n\nReturn your response as a JSON array with this structure:\n[\n  {\n    \"title\": \"Prompt title\",\n    \"category\": \"Category name\",\n    \"prompt\": \"Full detailed prompt text\",\n    \"context\": \"Why this is relevant now\"\n  }\n]\n\nBe creative, timely, and ensure prompts are immediately actionable."
+        }
+      },
+      "id": "7700b505-4c97-4159-a171-f490fc5d05d5",
+      "name": "Prompt Generator Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        256,
+        3456
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o"
+        },
+        "options": {
+          "temperature": 0.8
+        }
+      },
+      "id": "5613a8e2-70e8-4f47-9cac-f705f9339f7b",
+      "name": "OpenAI GPT Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        264,
+        3680
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "m99AwxO5mNlwLtaw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "generatedPrompts",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "sourceData",
+              "value": "={{ $('Fetch Real-Time World Data').first().json.articles[0].title }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "4f601a3d-638f-43c4-8875-7d221652cc13",
+      "name": "Format Generated Prompts",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        3456
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "<__PLACEHOLDER_VALUE__Google Sheet ID__>"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Prompt Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "generatedPrompts": "={{ JSON.stringify($json.generatedPrompts) }}",
+            "sourceData": "={{ $json.sourceData }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "0d36191e-5668-4e0d-bfcf-4d660e1c228e",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        3168
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3kqThWm5UwlFhmTk",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Workflow Configuration').first().json.recipientEmail }}",
+        "subject": "=New AI-Generated Prompts - {{ $now.toFormat('yyyy-MM-dd HH:mm') }}",
+        "message": "=<h2>Fresh Prompts Generated</h2><p>Timestamp: {{ $json.timestamp }}</p><p>Based on: {{ $json.sourceData }}</p><pre>{{ JSON.stringify($json.generatedPrompts, null, 2) }}</pre>",
+        "options": {}
+      },
+      "id": "1aad8e0d-f2f5-4ff0-b0f3-0fb6dd26db26",
+      "name": "Send Email Notification",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        832,
+        3360
+      ],
+      "webhookId": "5f82e002-abe0-4518-9b8f-b331797dc940",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "w5Bkx9KNgceO6ztH",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').first().json.slackChannel }}"
+        },
+        "text": "=*\ud83d\ude80 New AI-Generated Prompts*\n\n*Timestamp:* {{ $json.timestamp }}\n*Source:* {{ $json.sourceData }}\n\n```{{ JSON.stringify($json.generatedPrompts, null, 2) }}```",
+        "otherOptions": {}
+      },
+      "id": "7051dabe-3d4f-4f3a-9e11-d6b09af1db87",
+      "name": "Send Slack Message",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        3552
+      ],
+      "webhookId": "899238d7-0e80-4b9d-a942-fcca3a1b9aa2",
+      "credentials": {
+        "slackApi": {
+          "id": "qKrD8fb7lCVqUkPX",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').first().json.notionDatabaseId }}"
+        },
+        "title": "={{ 'Prompts - ' + $json.timestamp }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Timestamp",
+              "textContent": "={{ $json.timestamp }}"
+            },
+            {
+              "key": "Content",
+              "textContent": "={{ JSON.stringify($json.generatedPrompts) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9acdd484-d0f4-49d8-ab65-eb84bf518ec0",
+      "name": "Save to Notion",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        3744
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        392,
+        3680
+      ],
+      "id": "a035cd32-afce-42cb-be2b-696960a0236c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "automation-master",
+        "options": {}
+      },
+      "id": "30c83a77-5051-4196-b809-9f8111fee989",
+      "name": "Webhook Input Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -416,
+        2544
+      ],
+      "webhookId": "88410666-d005-4d0f-9393-b6957b2814a1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.request }}",
+        "options": {
+          "systemMessage": "You are a Master Automation Orchestrator with access to multiple tools for CRM management, research, and communication.\n\nYour capabilities:\n1. **HTTP Research Tool**: Fetch data from any public API or website\n2. **Google Sheets CRM Tool**: Read, update, and manage CRM data in Google Sheets\n3. **Gmail Automation Tool**: Send automated emails to leads, customers, or team members\n\nYour task is to:\n1. Understand the user's automation request\n2. Determine which tools are needed\n3. Execute the appropriate tool calls in the correct sequence\n4. Provide a clear summary of actions taken\n\nExamples of requests you can handle:\n- \"Research the latest AI trends and email me a summary\"\n- \"Find all high-priority leads in the CRM and send them personalized outreach emails\"\n- \"Update lead status in the CRM after sending follow-up emails\"\n- \"Fetch competitor data and add insights to the CRM\"\n\nAlways confirm actions taken and provide actionable next steps."
+        }
+      },
+      "id": "381ee81a-f863-4ebe-b7e7-f653a075bcfb",
+      "name": "Master Orchestrator Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        152,
+        2840
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o"
+        },
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "6571d463-bb10-44fe-81b6-4f84e789d12c",
+      "name": "OpenAI GPT Model 2",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        3064
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "m99AwxO5mNlwLtaw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Fetch data from any public API or website. Provide the full URL and optional headers.",
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', `diffrent urls depending on user input and workflow prompt(s)`, 'string') }}",
+        "options": {}
+      },
+      "id": "39868041-09b7-4917-8387-01f20ba1d7c6",
+      "name": "HTTP Research Tool",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        160,
+        3064
+      ]
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Read, update, or append data to Google Sheets CRM. Specify the sheet ID, sheet name, and operation (read/update/append).",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "3f89db43-1605-4f5f-8bdf-b186c104d16d",
+      "name": "Google Sheets CRM Tool",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        3064
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h3bwraZmRpFZkFlc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Send automated emails via Gmail. Provide recipient email (use $fromAI for dynamic), subject (use $fromAI for dynamic), and message content (use $fromAI for dynamic HTML).",
+        "sendTo": "={{ $fromAI('to') }}",
+        "subject": "={{ $fromAI('subject') }}",
+        "message": "={{ $fromAI('message_html') }}",
+        "options": {}
+      },
+      "id": "d2628ba6-4bdd-4b05-b9d0-eb87c89a8605",
+      "name": "Gmail Automation Tool",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        3064
+      ],
+      "webhookId": "b82ed7a8-91c5-4eca-b70c-eb49f7c749f7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "w5Bkx9KNgceO6ztH",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "crm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "crm"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "research",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "research"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "ai_agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ai_agent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "37d1c30a-aabc-4926-a412-07c86357d652",
+      "name": "Route by Task Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -192,
+        2528
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Workflow Configuration').first().json.crmApiUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Workflow Configuration').first().json.crmApiKey }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d3cc26d7-b9b8-46e3-8d49-67f7e7454a1e",
+      "name": "Fetch CRM Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        216,
+        2352
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Workflow Configuration').first().json.newsApiUrl }}?country=us&category=business&apiKey={{ $('Workflow Configuration').first().json.newsApiKey }}",
+        "options": {}
+      },
+      "id": "0eaaf22e-5405-41d6-8208-3a3f11b21f6b",
+      "name": "Fetch Market Trends",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        216,
+        2544
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e7dd5fba-a954-4581-934c-fe1d9d744339",
+      "name": "Merge All Data Sources",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        624,
+        2448
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "enrichedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "marketContext",
+              "value": "={{ $('Fetch Market Trends').first().json.articles[0].title }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "leadSource",
+              "value": "CRM API",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "8c3b4cc0-8f3f-44a6-a343-1fffaf10f784",
+      "name": "Enrich Lead Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        848,
+        2448
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Calculate lead score based on enriched data\nconst item = $input.item.json;\n\n// Initialize score\nlet leadScore = 0;\n\n// Score based on company size (if available)\nif (item.companySize) {\n  if (item.companySize > 1000) leadScore += 30;\n  else if (item.companySize > 100) leadScore += 20;\n  else if (item.companySize > 10) leadScore += 10;\n}\n\n// Score based on industry match (if available)\nif (item.industry && ['Technology', 'Software', 'SaaS'].includes(item.industry)) {\n  leadScore += 25;\n}\n\n// Score based on engagement level (if available)\nif (item.engagementLevel) {\n  if (item.engagementLevel === 'high') leadScore += 30;\n  else if (item.engagementLevel === 'medium') leadScore += 15;\n}\n\n// Score based on budget (if available)\nif (item.budget) {\n  if (item.budget > 50000) leadScore += 20;\n  else if (item.budget > 10000) leadScore += 10;\n}\n\n// Score based on decision maker status (if available)\nif (item.isDecisionMaker === true) {\n  leadScore += 15;\n}\n\n// Return the item with calculated lead score\nreturn {\n  ...item,\n  leadScore: leadScore,\n  scoreCalculatedAt: new Date().toISOString()\n};"
+      },
+      "id": "4dbaed17-693c-4ee6-9aa1-b91a263588f5",
+      "name": "Calculate Lead Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        2448
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.leadScore }}",
+              "rightValue": "={{ $('Workflow Configuration').first().json.leadScoreThreshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "37643412-9224-4693-a849-37e963e41b30",
+      "name": "Check Lead Priority",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1296,
+        2448
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=High-Priority Lead Alert: {{ $json.companyName }}",
+        "message": "=<h2>High-Priority Lead Detected</h2><p><strong>Company:</strong> {{ $json.companyName }}</p><p><strong>Lead Score:</strong> {{ $json.leadScore }}/100</p><p><strong>Industry:</strong> {{ $json.industry }}</p><p><strong>Market Context:</strong> {{ $json.marketContext }}</p><p>This lead requires immediate attention.</p>",
+        "options": {}
+      },
+      "id": "8fb8e075-d1be-4bdc-aa06-f67b68fb486d",
+      "name": "Send Priority Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1520,
+        2352
+      ],
+      "webhookId": "8401f5ed-ce42-42b5-8689-249559e6e1bc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "w5Bkx9KNgceO6ztH",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').first().json.crmSheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "companyName": "={{ $json.companyName }}",
+            "email": "={{ $json.email }}",
+            "leadScore": "={{ $json.leadScore }}",
+            "industry": "={{ $json.industry }}",
+            "marketContext": "={{ $json.marketContext }}",
+            "enrichedAt": "={{ $json.enrichedAt }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "5e022e66-b8fb-4a91-93f9-4ab7fe41f4b9",
+      "name": "Update CRM Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1520,
+        2544
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h3bwraZmRpFZkFlc",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every Few Minutes Trigger": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Fetch Real-Time World Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Real-Time World Data": {
+      "main": [
+        [
+          {
+            "node": "Prompt Generator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Prompt Generator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompt Generator Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Generated Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Generated Prompts": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheets",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Email Notification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Slack Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save to Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Prompt Generator Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "Route by Task Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Task Type": {
+      "main": [
+        [
+          {
+            "node": "Fetch CRM Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Market Trends",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Master Orchestrator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch CRM Data": {
+      "main": [
+        [
+          {
+            "node": "Merge All Data Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Market Trends": {
+      "main": [
+        [
+          {
+            "node": "Merge All Data Sources",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge All Data Sources": {
+      "main": [
+        [
+          {
+            "node": "Enrich Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrich Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Calculate Lead Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Lead Score": {
+      "main": [
+        [
+          {
+            "node": "Check Lead Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Lead Priority": {
+      "main": [
+        [
+          {
+            "node": "Send Priority Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update CRM Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT Model 2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Master Orchestrator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Research Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets CRM Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Automation Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Master Orchestrator Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "c5652d37-bda5-4e4c-bed8-539e084150c5",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-25T07:28:35.617Z",
+      "createdAt": "2025-11-25T07:28:35.617Z",
+      "role": "workflow:owner",
+      "workflowId": "gJjqf6fYQBlQFrjP",
+      "projectId": "uYtNtwSdnjBjYtuu"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

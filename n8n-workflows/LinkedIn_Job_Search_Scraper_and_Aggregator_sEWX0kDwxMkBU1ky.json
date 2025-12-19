@@ -1,0 +1,444 @@
+{
+  "updatedAt": "2025-11-11T10:59:53.000Z",
+  "createdAt": "2025-11-06T07:05:24.388Z",
+  "id": "sEWX0kDwxMkBU1ky",
+  "name": "LinkedIn Job Search Scraper and Aggregator",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "14d28da0-86aa-4bba-a91d-0f9fd1960855",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        1152
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "Job title",
+              "value": "<__PLACEHOLDER_VALUE__Job title to search for__>",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "location",
+              "value": "<__PLACEHOLDER_VALUE__Location (e.g., New York, NY)__>",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "distance",
+              "value": 25,
+              "type": "number"
+            },
+            {
+              "id": "id-4",
+              "name": "is_remote",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "id-5",
+              "name": "iterations",
+              "value": 0,
+              "type": "number"
+            },
+            {
+              "id": "id-6",
+              "name": "Hours Old",
+              "value": 24,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "7175ea1e-8558-40b3-8e28-09667d886a4e",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        1152
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "keywords",
+              "value": "={{ $('Workflow Configuration').first().json['Job title'] }}"
+            },
+            {
+              "name": "location",
+              "value": "={{ $('Workflow Configuration').first().json.location }}"
+            },
+            {
+              "name": "distance",
+              "value": "={{ $('Workflow Configuration').first().json.distance }}"
+            },
+            {
+              "name": "f_WT",
+              "value": "={{ $('Workflow Configuration').first().json.is_remote }}"
+            },
+            {
+              "name": "pageNum",
+              "value": "0"
+            },
+            {
+              "name": "start",
+              "value": "={{ $('Workflow Configuration').first().json.iterations * 10 }}"
+            },
+            {
+              "name": "f_TPR",
+              "value": "=r{{ $('Workflow Configuration').first().json['Hours Old'] * 3600 }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"authority\": \"www.linkedin.com\",\n  \"accept\": \"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\",\n  \"accept-language\": \"en-US,en;q=0.9\",\n  \"cache-control\": \"max-age=0\",\n  \"upgrade-insecure-requests\": \"1\",\n  \"user-agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\"\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "id": "e11d0629-588e-4ea4-9c29-909bca119e5a",
+      "name": "Get LinkedIn Jobs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1568,
+        1152
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "titles",
+              "cssSelector": "span.sr-only",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3c08e981-6281-4247-ba6a-eefd0d7ff776",
+      "name": "Extract Titles",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1792,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "titles",
+        "options": {}
+      },
+      "id": "9a24c502-5d10-49e1-849c-c4a76652652d",
+      "name": "Split Out Titles",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "url",
+              "cssSelector": "a.base-card__full-link",
+              "returnValue": "attribute",
+              "attribute": "href",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fe90b03e-14df-4f90-998f-9dd504c523ab",
+      "name": "Extract Links",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1792,
+        1152
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "url",
+        "options": {}
+      },
+      "id": "efeda3e9-6e9d-4ff3-9604-5fb9f1645f0b",
+      "name": "Split Out Links",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2032,
+        1152
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "location",
+              "cssSelector": "span.job-search-card__location",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3f40b14b-5961-45c7-a458-333aae2c03a6",
+      "name": "Extract Location",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1792,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "location",
+        "options": {}
+      },
+      "id": "fdacf58c-8c32-4b11-9947-de920b68ec64",
+      "name": "Split Out Location",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "id": "0cfdc12b-0141-42dd-b175-1d1dd56e9bc4",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2272,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=make easy to read : {{ $json.titles }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        2496,
+        1088
+      ],
+      "id": "a4982d70-4292-4a4e-9742-10be6517e0f2",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "m99AwxO5mNlwLtaw",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Get LinkedIn Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get LinkedIn Jobs": {
+      "main": [
+        [
+          {
+            "node": "Extract Titles",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Links",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Location",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Titles": {
+      "main": [
+        [
+          {
+            "node": "Split Out Titles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Links": {
+      "main": [
+        [
+          {
+            "node": "Split Out Links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Location": {
+      "main": [
+        [
+          {
+            "node": "Split Out Location",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Titles": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Links": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Split Out Location": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "893f380e-01a8-4f6a-ae95-4c17999b2eed",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-06T07:05:24.391Z",
+      "createdAt": "2025-11-06T07:05:24.391Z",
+      "role": "workflow:owner",
+      "workflowId": "sEWX0kDwxMkBU1ky",
+      "projectId": "uYtNtwSdnjBjYtuu"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

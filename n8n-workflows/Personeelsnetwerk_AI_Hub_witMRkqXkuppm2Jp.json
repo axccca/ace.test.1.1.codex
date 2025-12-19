@@ -1,0 +1,1082 @@
+{
+  "updatedAt": "2025-12-15T14:58:10.034Z",
+  "createdAt": "2025-12-15T14:58:10.034Z",
+  "id": "witMRkqXkuppm2Jp",
+  "name": "Personeelsnetwerk AI Hub",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "784230a3-93f0-422c-8913-f3b2ebae0f2a",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8,20 * * *"
+            }
+          ]
+        }
+      },
+      "id": "29f5e7aa-7e9f-4cc3-a0b7-36b17a13aa34",
+      "name": "Horeca Schedule (8am & 8pm)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "aiPlatform",
+              "value": "openai",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "userPrompt",
+              "value": "Your question or task here",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "mode",
+              "value": "general",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "93f302f0-4b7f-421f-b3ca-a96a3d774711",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -176,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cities",
+              "name": "cities",
+              "value": "=['Amsterdam', 'Rotterdam', 'Den Haag', 'Utrecht', 'Eindhoven', 'Groningen', 'Breda', 'Nijmegen', 'Haarlem', 'Arnhem']",
+              "type": "array"
+            },
+            {
+              "id": "keywords",
+              "name": "job_keywords",
+              "value": "=['afwasser', 'schoonmaker', 'housekeeping', 'kok', 'keukenhulp', 'bediening', 'horeca medewerker', 'barista']",
+              "type": "array"
+            },
+            {
+              "id": "target",
+              "name": "target_leads",
+              "value": "50",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2cf0f8d0-f795-4ea1-ad32-cdc22c0bb085",
+      "name": "Horeca Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -176,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "openai",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "OpenAI"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "claude",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Claude"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "gemini",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Gemini"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "groq",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Groq"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.aiPlatform }}",
+                    "rightValue": "mistral",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mistral"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "34d6fdef-5d70-4ff0-8e3c-c62272d5adf8",
+      "name": "Select AI Platform",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        48,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "conversation",
+        "messages": {
+          "values": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "580d1d50-fbcb-4819-9a44-546101054b25",
+      "name": "OpenAI GPT",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        368,
+        272
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "m99AwxO5mNlwLtaw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-3-5-sonnet-20241022"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.userPrompt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "df27432e-3743-4e9a-9002-a93cd8bbd42a",
+      "name": "Anthropic Claude",
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        368,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gemini-1.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.userPrompt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b5c0ca00-7941-4fa8-ab28-9756780b46e7",
+      "name": "Google Gemini",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        368,
+        864
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "id": "d6c5fcb5-9dc7-47c7-9e92-edebbc6e5e55",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        784,
+        2432
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userPrompt }}",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant for Personeelsnetwerk.com, a Dutch staffing agency specializing in horeca recruitment."
+        }
+      },
+      "id": "2de88825-0395-403f-9026-ab20ed1d983a",
+      "name": "Groq Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        720,
+        2208
+      ]
+    },
+    {
+      "parameters": {
+        "model": "mistral-large-latest",
+        "options": {}
+      },
+      "id": "400cb696-4631-4c17-817b-a9e521c76276",
+      "name": "Mistral Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        784,
+        2032
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userPrompt }}",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant for Personeelsnetwerk.com."
+        }
+      },
+      "id": "5240a451-90c1-42f0-a310-4eb6722e1711",
+      "name": "Mistral Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        720,
+        1808
+      ]
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "id": "1f0868b4-26f7-44ed-8dcf-18537caf87ce",
+      "name": "Get LinkedIn CSV",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        48,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "parseCsv"
+      },
+      "id": "1d56561e-9c4a-49ca-ae2d-c504abf7a380",
+      "name": "Parse CSV",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        272,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.company || $json['Company Name'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            },
+            {
+              "leftValue": "={{ $json.title || $json['Job Title'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4cbefb98-1a68-4afa-8212-9de70a0df7d9",
+      "name": "Filter Valid Jobs",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        496,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Je bent een expert voor Personeelsnetwerk.com. Analyseer horeca vacatures.\n\nWE ZOEKEN: afwasser, schoonmaker, housekeeping, kok, keukenhulp, bediening, zaalmedewerker, barista\nWE VERMIJDEN: manager, directeur, senior posities\n\nGeef score 0-100 in JSON: {\"qualified\": bool, \"score\": 0-100, \"category\": string, \"priority\": \"high/medium/low\", \"reasons\": [], \"action\": \"Direct contact/Review/Skip\"}",
+              "role": "system"
+            },
+            {
+              "content": "=Bedrijf: {{ $json.company || $json['Company Name'] }}\nFunctie: {{ $json.title || $json['Job Title'] }}\nLocatie: {{ $json.location || $json.Location }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 500,
+          "temperature": 0.3
+        }
+      },
+      "id": "8f6f8745-b347-4f81-90ca-279cae9d3c3a",
+      "name": "OpenAI Qualify Lead",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        720,
+        384
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "m99AwxO5mNlwLtaw",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  try {\n    const aiText = item.json.choices?.[0]?.message?.content || item.json.content || '{}';\n    const cleaned = aiText.replace(/```json|```/g, '').trim();\n    const parsed = JSON.parse(cleaned);\n    \n    results.push({\n      json: {\n        ...item.json,\n        ai_qualified: parsed.qualified || false,\n        ai_score: parsed.score || 0,\n        ai_category: parsed.category || 'unknown',\n        ai_priority: parsed.priority || 'low',\n        ai_reasons: (parsed.reasons || []).join('; '),\n        ai_action: parsed.action || 'Skip',\n        processed_at: new Date().toISOString()\n      }\n    });\n  } catch (e) {\n    results.push({\n      json: {...item.json, ai_qualified: false, ai_score: 0, ai_error: e.message}\n    });\n  }\n}\n\nreturn results;"
+      },
+      "id": "9a9cc9a5-af62-4545-84f4-ad6b9451edcb",
+      "name": "Parse AI Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.ai_qualified }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "leftValue": "={{ $json.ai_score }}",
+              "rightValue": 60,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fc0be62b-5d78-45bf-9ca8-f4eb146dacba",
+      "name": "Filter Qualified (60+)",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now.format('dd-MM-yyyy') }}",
+            "Time": "={{ $now.format('HH:mm') }}",
+            "Company": "={{ $json.company || $json['Company Name'] }}",
+            "Job Title": "={{ $json.title || $json['Job Title'] }}",
+            "Location": "={{ $json.location || $json.Location }}",
+            "AI Score": "={{ $json.ai_score }}",
+            "Category": "={{ $json.ai_category }}",
+            "Priority": "={{ $json.ai_priority }}",
+            "Reasons": "={{ $json.ai_reasons }}",
+            "Action": "={{ $json.ai_action }}",
+            "LinkedIn URL": "={{ $json.job_url || $json['Job URL'] }}",
+            "Status": "Nieuw"
+          }
+        },
+        "options": {}
+      },
+      "id": "0e948a38-a34f-4c20-94e9-649b246a7d6e",
+      "name": "Save to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        1392,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "subject": "=\u2705 Horeca Leads - {{ $items().length }} nieuwe leads",
+        "options": {}
+      },
+      "id": "f8b58a57-a751-4085-a82e-75dce2ae705e",
+      "name": "Email Report",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1616,
+        384
+      ],
+      "webhookId": "af983e91-54b8-4542-91ad-7b26f5652307"
+    },
+    {
+      "parameters": {},
+      "id": "cbc31641-de83-432a-a6de-bbaba655d3d7",
+      "name": "Calculator Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "description": "Execute JavaScript code",
+        "jsCode": "const input = $fromAI(\"code_input\");\nreturn { result: eval(input) };"
+      },
+      "id": "599f8427-6208-4be2-8fec-be6853b29672",
+      "name": "Code Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "toolDescription": "Make HTTP requests",
+        "url": "={{ $fromAI(\"api_url\") }}",
+        "options": {}
+      },
+      "id": "ee63a90c-9c09-4500-9490-79a45db94064",
+      "name": "HTTP Request Tool",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        176,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $fromAI('recipient_email') }}",
+        "subject": "={{ $fromAI('email_subject') }}",
+        "message": "={{ $fromAI('email_body') }}",
+        "options": {}
+      },
+      "id": "6de250dc-736c-4918-be21-745a3d0c3aa9",
+      "name": "Gmail Tool",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        304,
+        496
+      ],
+      "webhookId": "aa9da753-7540-4114-b866-92f9822f905e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "w5Bkx9KNgceO6ztH",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $fromAI('channel_name') }}"
+        },
+        "text": "={{ $fromAI('message_text') }}",
+        "otherOptions": {}
+      },
+      "id": "ce192973-c002-429c-9309-412d89d53bba",
+      "name": "Slack Tool",
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.3,
+      "position": [
+        432,
+        496
+      ],
+      "webhookId": "e0086fec-6d17-48dd-adf4-aa5996495b38",
+      "credentials": {
+        "slackApi": {
+          "id": "qKrD8fb7lCVqUkPX",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $fromAI('spreadsheet_id') }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $fromAI('sheet_name') }}"
+        },
+        "options": {}
+      },
+      "id": "b07f5903-7775-4124-bbff-440b25727056",
+      "name": "Google Sheets Tool",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        560,
+        496
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "h3bwraZmRpFZkFlc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $fromAI(\"calendar_id\", \"Calendar ID\", \"string\", \"primary\") }}"
+        },
+        "start": "={{ $fromAI(\"start_time\") }}",
+        "end": "={{ $fromAI(\"end_time\") }}",
+        "additionalFields": {
+          "summary": "={{ $fromAI(\"event_title\") }}"
+        }
+      },
+      "id": "943d9039-2eb3-4877-8d5a-8b9c3bc5e071",
+      "name": "Google Calendar Tool",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        688,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "sessionKey": "={{ $json.sessionId || \"default\" }}"
+      },
+      "id": "9bc34ddf-ed9c-42dd-92ce-cb26038a8229",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        848,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "personeelsnetwerk-mcp"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        368,
+        80
+      ],
+      "id": "955f0e8a-4458-46d0-816a-2bba115d5645",
+      "name": "MCP Server Trigger",
+      "webhookId": "personeelsnetwerk-mcp"
+    },
+    {
+      "parameters": {
+        "path": "horeca-webhook",
+        "options": {}
+      },
+      "id": "b3614acf-5d2e-4e6b-a50c-6aa4bd8a81a7",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        592
+      ],
+      "webhookId": "horeca-webhook"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Horeca Schedule (8am & 8pm)": {
+      "main": [
+        [
+          {
+            "node": "Horeca Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Horeca Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Horeca Config": {
+      "main": [
+        [
+          {
+            "node": "Get LinkedIn CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get LinkedIn CSV": {
+      "main": [
+        [
+          {
+            "node": "Parse CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse CSV": {
+      "main": [
+        [
+          {
+            "node": "Filter Valid Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Valid Jobs": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Qualify Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Qualify Lead": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Results": {
+      "main": [
+        [
+          {
+            "node": "Filter Qualified (60+)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Qualified (60+)": {
+      "main": [
+        [
+          {
+            "node": "Save to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Email Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Select AI Platform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select AI Platform": {
+      "main": [
+        [
+          {
+            "node": "OpenAI GPT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Anthropic Claude",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Groq Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mistral Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Groq Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Mistral Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Anthropic Claude",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Groq Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "c3ddb211-923f-4640-954f-5ab79c2d3b5b",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-15T14:58:10.038Z",
+      "createdAt": "2025-12-15T14:58:10.038Z",
+      "role": "workflow:owner",
+      "workflowId": "witMRkqXkuppm2Jp",
+      "projectId": "uYtNtwSdnjBjYtuu"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

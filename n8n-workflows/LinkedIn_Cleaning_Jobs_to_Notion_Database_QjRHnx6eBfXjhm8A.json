@@ -1,0 +1,166 @@
+{
+  "updatedAt": "2025-11-06T07:02:49.000Z",
+  "createdAt": "2025-11-06T04:58:00.428Z",
+  "id": "QjRHnx6eBfXjhm8A",
+  "name": "LinkedIn Cleaning Jobs to Notion Database",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "9dc4edf7-36e7-4740-8a57-c6b73b5b954a",
+      "name": "When clicking 'Execute workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/cheap_scraper~linkedin-job-scraper/run-sync-get-dataset-items?token=APIFY_API_KEY_REDACTED",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"publishedAt\": \"r604800\",\n    \"saveOnlyUniqueItems\": false,\n    \"startUrls\": [\n        {\n            \"url\": \"https://www.linkedin.com/jobs/search/?currentJobId=4247857183&f_TPR=r604800&geoId=106993522&keywords=Huishoudelijke%20schoonmaak&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true\"\n        }\n    ]\n}",
+        "options": {}
+      },
+      "id": "2ce6ed85-eb09-4255-b874-e7648bc50886",
+      "name": "LinkedIn Schoonmaak",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2784,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Create organized job listings\nconst jobs = [];\n\nfor (const item of items) {\n  const data = item.json;\n  \n  jobs.push({\n    title: data.jobTitle || 'Geen titel',\n    company: data.companyName || 'Onbekend bedrijf',\n    location: data.location || 'Onbekende locatie',\n    description: data.jobDescription || 'Geen beschrijving',\n    url: data.url || '',\n    postedDate: data.postedDate || 'Onbekend'\n  });\n}\n\nreturn [{ json: { jobs } }];"
+      },
+      "id": "f173e442-8376-4b99-b251-65d4760d80b7",
+      "name": "Code in JavaScript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3008,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0a27499b-ec02-4393-a3d0-43b68eb01e2c",
+      "name": "Split Jobs Array",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3232,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "pageId": {
+          "__rl": true,
+          "mode": "url",
+          "value": ""
+        },
+        "options": {}
+      },
+      "id": "48fc536d-8559-43f3-ac93-2b6f20796abc",
+      "name": "Add to Notion Database",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        3456,
+        912
+      ]
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Schoonmaak",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Schoonmaak": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Split Jobs Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Jobs Array": {
+      "main": [
+        [
+          {
+            "node": "Add to Notion Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Add to Notion Database": [
+      {
+        "json": {
+          "name": "First item",
+          "code": 1
+        }
+      },
+      {
+        "json": {
+          "name": "Second item",
+          "code": 2
+        }
+      }
+    ]
+  },
+  "versionId": "52584d85-13df-4564-b27e-304fe4c542c0",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-06T04:58:00.431Z",
+      "createdAt": "2025-11-06T04:58:00.431Z",
+      "role": "workflow:owner",
+      "workflowId": "QjRHnx6eBfXjhm8A",
+      "projectId": "uYtNtwSdnjBjYtuu"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
