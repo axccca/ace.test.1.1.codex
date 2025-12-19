@@ -1,0 +1,39 @@
+SOCIAL MEDIA AND DISTRIBUTION CONTEXT
+
+Platform Strategy:
+- LinkedIn: B2B client acquisition, thought leadership (2-3x/week)
+- Instagram: Visual employer branding, staff spotlights (3-5x/week)
+- TikTok: Short recruitment content, day-in-life (3-5x/week)
+- Facebook: Community, local groups (2-3x/week)
+- WhatsApp Channels: Staff broadcasts (as needed)
+
+Content Calendar (Google Sheets):
+Fields: post date, platform, content type, copy, media, status
+Automation: n8n trigger on scheduled date → format for platform → post via Buffer/native API → log and track
+
+Social Listening:
+- Monitor: brand mentions, competitor mentions, industry keywords
+- Aggregate sentiment scores
+- Alert on spikes (positive or negative)
+- Route engagement opportunities within 30 minutes
+- Track response times
+
+UGC Collection:
+- Post-shift WhatsApp: Request photo/video testimonial
+- Route to review queue
+- Approved content: schedule with credits and consent logged
+- Maintain UGC library by type, city, role
+
+Job Posting Syndication:
+- New role in CRM → formatted social posts
+- Add city targeting and role hashtags
+- Publish with UTM tracking
+- Track applications by source
+
+Content Themes:
+- Behind-the-scenes at venues
+- Staff success stories
+- Day-in-the-life content
+- Tips for horeca workers
+- City-specific content
+- Compliance/professionalism highlights

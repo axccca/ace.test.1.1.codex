@@ -1,0 +1,35 @@
+COMPLIANCE AND LEGAL CONTEXT
+
+Dutch Staffing Requirements:
+- WAADI registration: Maintained, displayed on website and invoices
+- SNA certification: Maintained with annual audits
+- CAO compliance: Wages, hours, holiday pay per collective agreement
+- Reserves: Maintained for claims
+
+GDPR:
+- Controller for staff and client data
+- Processor agreements with all vendors
+- ROPA: Maintained, updated quarterly
+- Retention periods: Defined and enforced
+- Consent capture: Email, WhatsApp, SMS, cookies with timestamp
+- Withdrawal: Honored immediately and synced
+- Rights workflows: Access, deletion, portability, correction
+- DPIA: Required before new data flows
+
+NIS2:
+- Scope assessment: Completed
+- Security governance: Assigned
+- Incident reporting: Within 24 hours
+- Supplier management: Security requirements
+
+Contracts:
+- Staff contracts: Templated by role, auto-generated
+- Client MSA + SOW: Version controlled
+- Subcontractor agreements: Include WAADI, SNA, data terms
+
+Key compliance checkpoints:
+1. Verify WAADI/SNA before any staffing activity
+2. Confirm consent before any outbound communication
+3. Apply correct CAO rates for all roles
+4. Document all data processing activities
+5. Report security incidents within 24 hours

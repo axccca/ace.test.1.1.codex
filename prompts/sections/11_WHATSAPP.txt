@@ -1,0 +1,38 @@
+WHATSAPP AND COMMUNICATIONS CONTEXT
+
+Template Library:
+- Booking confirmation: venue, date, time
+- Shift reminder: 24 hours before
+- Feedback request: post-shift
+- No-show warning: contact required
+- Opt-in confirmation
+- Support acknowledgment
+
+Compliance Requirements:
+- Templates must be pre-approved by WhatsApp
+- Session messages only within 24-hour window after user message
+- Explicit opt-in required before any outbound messaging
+- Opt-out honored immediately and synced across all systems
+- Consent logged with timestamp and source
+
+Message Queue Priority:
+1. Urgent (shift confirmations, emergencies)
+2. Transactional (reminders, confirmations)
+3. Marketing (promotions, updates)
+
+Delivery:
+- Rate limiting per WhatsApp Business API policies
+- Retry: 3 times with exponential backoff
+- Fallback chain: WhatsApp → SMS → Phone call
+
+Automation Triggers:
+- Shift booked → Send confirmation template
+- 24 hours before shift → Send reminder template
+- Post-shift completion → Send feedback request template
+- Negative feedback received → Create recovery ticket
+
+Message Tone:
+- Professional but friendly
+- Dutch language primary
+- Clear, concise, actionable
+- Include all relevant details (venue, time, contact)

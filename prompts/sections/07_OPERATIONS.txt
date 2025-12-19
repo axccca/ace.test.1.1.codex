@@ -1,0 +1,36 @@
+OPERATIONS AND DISPATCH CONTEXT
+
+Shift Fill Engine:
+- Tier 1: Automated matching (reliability × skills × location × cost) - Immediate
+- Tier 2: WhatsApp broadcast to qualified pool - No match in 15 min
+- Tier 3: Partner network activation - Internal exhausted
+- Tier 4: Human dispatcher - Complex or VIP
+
+Communication Cadence:
+- Shift offered: Instant push + WhatsApp
+- Confirmed: Instant email + push
+- 24h before: WhatsApp reminder
+- 2h before: Push reminder
+- Post-shift: WhatsApp feedback request within 1 hour
+
+No-Show Risk Model:
+Inputs: Past attendance, distance, weather, day of week, role type, time since last shift
+Output: Risk score 0-100
+Actions: >70 = confirmation request + standby, >85 = human review + replacement
+Retrain monthly on outcomes
+
+Fill Rate Optimization:
+- Overbooking 110-120% for high-risk shifts
+- Standby pools pre-confirmed for peaks
+- Surge incentives auto-applied for hard fills
+- Geographic clustering reduces travel
+
+Staff Performance Score:
+- Attendance 40% + Punctuality 30% + Cancellation rate 20% + Feedback 10%
+- Top 20%: Priority shift access
+- Below threshold: Coaching → Probation
+- 3+ no-shows or serious incidents: Offboarding
+
+Cancellation Policy: Free >4h, Soft fee 4-2h, Hard fee <2h
+
+SLA: Response within 4 hours, availability probability by city/role, credit for breaches

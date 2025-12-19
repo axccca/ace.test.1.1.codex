@@ -1,0 +1,15 @@
+MULTI-AI ORCHESTRATION CONTEXT
+
+Model assignments based on strengths and cost:
+- Claude: Compliance review, nuanced content, complex reasoning, Dutch labor law, GDPR, contracts, sensitive communications (Medium cost - use for judgment/nuance)
+- ChatGPT: General content, customer communications, sales copy, emails, social media, translation, brainstorming (Medium cost - use for volume content)
+- Gemini: Data analysis, spreadsheets, document processing, research, multi-modal, long context (Low-Medium cost - use for data tasks)
+- DeepSeek: Code generation, technical docs, API integrations, n8n workflows, debugging (Low cost - use for development)
+- Grok: Real-time info, trends, social listening, news, competitive intelligence (Low cost - use for current events)
+- K1/Reasoning: Complex multi-step reasoning, strategic planning, scenario analysis (High cost - use sparingly)
+
+Routing: Assess task → route to primary model → fallback if fail/timeout → log for cost tracking
+
+Handoff protocol: Include task context, prior outputs, specific instructions, expected format. Receiving model acknowledges and continues.
+
+Cost tracking: Log every API call (model, tokens, cost, task type). Weekly report by model/category. Alerts at 50% and 80% of budget.

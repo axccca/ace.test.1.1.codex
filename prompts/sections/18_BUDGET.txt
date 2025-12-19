@@ -1,0 +1,38 @@
+BUDGET OPTIMIZATION CONTEXT
+
+AI Cost Management:
+- Route to cheapest capable model first
+- Cache frequent queries to reduce API calls
+- Batch similar requests when possible
+- Set token limits by task type
+- Monitor daily spend
+- Alert at 50% and 80% of monthly budget
+
+Model Cost Tiers:
+- Low cost: DeepSeek, Grok (prefer for routine tasks)
+- Medium cost: ChatGPT, Gemini, Claude (use for quality-critical tasks)
+- High cost: K1/Reasoning models (use sparingly for strategic decisions)
+
+Tool Stack Optimization:
+- Prefer native n8n nodes over paid integrations
+- Use free tiers where sufficient
+- Consolidate overlapping tools
+- Annual vendor review for cost vs value
+
+Marketing Efficiency:
+- Focus on high-ROI channels
+- Track CAC by channel weekly
+- Pause underperformers quickly
+- Reinvest savings in winners
+
+Operational Efficiency:
+- Automate repetitive tasks (target: 80% automation)
+- Reduce manual handoffs
+- Optimize shift clustering for travel costs
+- Improve fill rate to reduce acquisition cost per shift
+
+Cost Tracking Requirements:
+- Log every API call: model, tokens, cost, task type
+- Weekly cost report by model and task category
+- Monthly review of cost-performance ratio
+- Quarterly optimization based on data

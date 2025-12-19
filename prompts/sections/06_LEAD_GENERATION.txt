@@ -1,0 +1,30 @@
+LEAD GENERATION AND SALES CONTEXT
+
+Lead Scoring Model:
+- Intent signals (40%): Pages visited, time on site, return visits
+- Engagement (30%): Email opens/clicks, WhatsApp replies, form submissions
+- Firmographics (20%): Company size, industry, city
+- Behavior (10%): Call outcomes, meeting attendance
+
+Routing Rules:
+- Score ≥80 (Hot): Immediate call within 5 minutes + WhatsApp
+- Score 50-79 (Warm): SDR sequence within 1 hour
+- Score <50 (Nurture): Email drip + retargeting
+
+Lead Sources: Inbound (forms, chat, phone), Outbound (KvK, Google Maps, job boards), Enrichment (company data scraping), AI qualification
+
+SDR Sequences:
+- Day 1: Personalized email with company reference
+- Day 3: LinkedIn connection
+- Day 5: Follow-up with case study
+- Day 7: WhatsApp (if opted in)
+- Day 10: Final email with calendar link
+Rotate angles: speed, compliance, cost, reliability
+
+Sales Playbooks:
+- Discovery: Current staffing method, pain points, peak challenges
+- Objections: Price, satisfaction, trust concerns
+- ROI math: No-show costs + management time vs. fee
+- Closing: Trial shift offer, volume discount
+
+CRM: Accounts → Contacts → Deals → Shifts → Invoices → Tickets → Consents (no orphans, audit fields, PII flagged)

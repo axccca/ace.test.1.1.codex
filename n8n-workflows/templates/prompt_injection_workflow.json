@@ -1,0 +1,398 @@
+{
+  "name": "Personeelsnetwerk - AI Prompt Context Injection",
+  "description": "Template workflow for injecting master prompt context into AI requests",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-request",
+        "options": {}
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "ai-request-webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "taskType",
+              "value": "={{ $json.body.taskType }}",
+              "type": "string"
+            },
+            {
+              "name": "userPrompt",
+              "value": "={{ $json.body.prompt }}",
+              "type": "string"
+            },
+            {
+              "name": "preferredModel",
+              "value": "={{ $json.body.model || 'auto' }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Extract Request Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "compliance",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "outputKey": "compliance"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "lead_generation",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "outputKey": "lead_generation"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "operations",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "outputKey": "operations"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "content",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "outputKey": "content"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "billing",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "outputKey": "billing"
+            }
+          ]
+        },
+        "fallbackOutput": "default"
+      },
+      "name": "Route by Task Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "systemContext",
+              "value": "You are the autonomous orchestrator for Personeelsnetwerk.com, a specialized Dutch horeca staffing agency operating in Amsterdam, Rotterdam, Den Haag, Utrecht and expansion cities. Core roles are afwassers, keukenschoonmaak, housekeeping, cooks, kitchen staff.\n\nCOMPLIANCE AND LEGAL CONTEXT:\n- WAADI registration: Maintained, displayed on website and invoices\n- SNA certification: Maintained with annual audits\n- CAO compliance: Wages, hours, holiday pay per collective agreement\n- GDPR: Controller for staff and client data, processor agreements required\n- Consent required before any outbound communication\n- Report security incidents within 24 hours\n\nAlways verify WAADI/SNA compliance. Apply correct CAO rates. Document all data processing.",
+              "type": "string"
+            },
+            {
+              "name": "preferredModel",
+              "value": "claude",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Compliance Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [660, -200]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "systemContext",
+              "value": "You are the autonomous orchestrator for Personeelsnetwerk.com, a specialized Dutch horeca staffing agency.\n\nLEAD GENERATION CONTEXT:\nLead Scoring: Intent (40%) + Engagement (30%) + Firmographics (20%) + Behavior (10%)\nRouting: Score ≥80 = Hot (call in 5 min), 50-79 = Warm (SDR sequence), <50 = Nurture\n\nSDR Sequence: Day 1 email → Day 3 LinkedIn → Day 5 case study → Day 7 WhatsApp → Day 10 final\n\nSales angles: Speed, compliance, cost savings, reliability\nROI math: No-show costs + management time vs. our fee\nClosing: Trial shift offer, volume discounts",
+              "type": "string"
+            },
+            {
+              "name": "preferredModel",
+              "value": "chatgpt",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Lead Gen Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [660, -50]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "systemContext",
+              "value": "You are the autonomous orchestrator for Personeelsnetwerk.com, a specialized Dutch horeca staffing agency.\n\nOPERATIONS CONTEXT:\nShift Fill Tiers: 1) Auto-match (reliability×skills×location×cost) → 2) WhatsApp broadcast (15 min) → 3) Partner network → 4) Human dispatcher\n\nCommunication: Offer (instant) → Confirm (instant) → Reminder (24h) → Reminder (2h) → Feedback (post-shift)\n\nNo-Show Risk: Score 0-100 based on attendance, distance, weather, day, role. >70 = add standby, >85 = human review\n\nStaff Score: Attendance (40%) + Punctuality (30%) + Cancellation (20%) + Feedback (10%)\n\nSLA: Response within 4 hours, credit for breaches",
+              "type": "string"
+            },
+            {
+              "name": "preferredModel",
+              "value": "chatgpt",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Operations Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [660, 100]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "systemContext",
+              "value": "You are the autonomous orchestrator for Personeelsnetwerk.com, a specialized Dutch horeca staffing agency.\n\nCONTENT AND SEO CONTEXT:\nPages: City hubs (/amsterdam), Role hubs (/afwasser), Combined (/amsterdam/afwasser), Urgent (/spoed/city/role)\n\nProgrammatic pages need: Local intro, stats, requirements, testimonials, availability widget, CTA, schema markup\n\nE-E-A-T: Author bylines, credentials (SNA, WAADI), review dates, cited sources, real testimonials\n\nContent score = (Revenue Impact × 2) + Inverse Difficulty + Inverse Time\nWeekly cadence: 3-5 pieces\n\nAI Discoverability: Citable stats, Organization schema, consistent NAP, machine-readable manifests",
+              "type": "string"
+            },
+            {
+              "name": "preferredModel",
+              "value": "chatgpt",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Content Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [660, 250]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "systemContext",
+              "value": "You are the autonomous orchestrator for Personeelsnetwerk.com, a specialized Dutch horeca staffing agency.\n\nBILLING CONTEXT:\nPricing: Base rate by role/city. Night +25%, Weekend +15%, Holiday +50-100%, Last-minute +20%, Surge dynamic\n\nInvoice: PNWK-2025-XXXXX, itemized, BTW 21%, G-rekening option\nPayment: iDEAL primary, net 14 standard, net 30 enterprise\n\nDunning: Due → +3 friendly → +7 WhatsApp → +14 firm + late fee → +21 pause → +30 collections\n\nFraud flags: Duplicate accounts, rapid creation, chargebacks, unusual patterns",
+              "type": "string"
+            },
+            {
+              "name": "preferredModel",
+              "value": "gemini",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Billing Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [660, 400]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "systemContext",
+              "value": "You are the autonomous orchestrator for Personeelsnetwerk.com, a specialized Dutch horeca staffing agency operating in Amsterdam, Rotterdam, Den Haag, Utrecht. Core roles: afwassers, keukenschoonmaak, housekeeping, cooks, kitchen staff.\n\nNorth star: Profitable filled shifts. Metrics: Fill <4h, Rate >95%, Margin >25%\n\nYou are budget-conscious and optimize for cost-effective solutions while maintaining quality.",
+              "type": "string"
+            },
+            {
+              "name": "preferredModel",
+              "value": "auto",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Default Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [660, 550]
+    },
+    {
+      "parameters": {},
+      "name": "Merge Contexts",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [880, 150]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "fullPrompt",
+              "value": "={{ $json.systemContext }}\n\n---\n\nUSER REQUEST:\n{{ $('Extract Request Data').first().json.userPrompt }}",
+              "type": "string"
+            },
+            {
+              "name": "model",
+              "value": "={{ $json.preferredModel === 'auto' ? $('Extract Request Data').first().json.preferredModel : $json.preferredModel }}",
+              "type": "string"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "Build Full Prompt",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1100, 150]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.model }}",
+                    "rightValue": "claude",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "outputKey": "claude"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.model }}",
+                    "rightValue": "chatgpt",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "outputKey": "chatgpt"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.model }}",
+                    "rightValue": "gemini",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "outputKey": "gemini"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.model }}",
+                    "rightValue": "deepseek",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "outputKey": "deepseek"
+            }
+          ]
+        },
+        "fallbackOutput": "chatgpt_default"
+      },
+      "name": "Route to AI Model",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1320, 150]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [{ "node": "Extract Request Data", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extract Request Data": {
+      "main": [
+        [{ "node": "Route by Task Type", "type": "main", "index": 0 }]
+      ]
+    },
+    "Route by Task Type": {
+      "main": [
+        [{ "node": "Compliance Context", "type": "main", "index": 0 }],
+        [{ "node": "Lead Gen Context", "type": "main", "index": 0 }],
+        [{ "node": "Operations Context", "type": "main", "index": 0 }],
+        [{ "node": "Content Context", "type": "main", "index": 0 }],
+        [{ "node": "Billing Context", "type": "main", "index": 0 }],
+        [{ "node": "Default Context", "type": "main", "index": 0 }]
+      ]
+    },
+    "Compliance Context": {
+      "main": [[{ "node": "Merge Contexts", "type": "main", "index": 0 }]]
+    },
+    "Lead Gen Context": {
+      "main": [[{ "node": "Merge Contexts", "type": "main", "index": 0 }]]
+    },
+    "Operations Context": {
+      "main": [[{ "node": "Merge Contexts", "type": "main", "index": 0 }]]
+    },
+    "Content Context": {
+      "main": [[{ "node": "Merge Contexts", "type": "main", "index": 0 }]]
+    },
+    "Billing Context": {
+      "main": [[{ "node": "Merge Contexts", "type": "main", "index": 0 }]]
+    },
+    "Default Context": {
+      "main": [[{ "node": "Merge Contexts", "type": "main", "index": 0 }]]
+    },
+    "Merge Contexts": {
+      "main": [[{ "node": "Build Full Prompt", "type": "main", "index": 0 }]]
+    },
+    "Build Full Prompt": {
+      "main": [[{ "node": "Route to AI Model", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "version": "2.0",
+    "description": "Routes AI requests to appropriate models with context injection from master prompt"
+  }
+}

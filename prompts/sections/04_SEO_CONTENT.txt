@@ -1,0 +1,46 @@
+SEO AND CONTENT ECOSYSTEM CONTEXT
+
+Subdomain Strategy:
+- Primary: personeelsnetwerk.com
+- City hubs: /amsterdam, /rotterdam, /denhaag, /utrecht
+- Role hubs: /afwasser, /housekeeping, /keukenschoonmaak, /kok
+- Combined: /amsterdam/afwasser
+- Urgent: /spoed/[city]/[role]
+
+Programmatic Pages (top 20 cities × top 10 roles):
+- Unique intro with local context
+- Local statistics and market data
+- Role-specific requirements and benefits
+- Testimonials from city/role
+- Real-time availability widget
+- Clear CTA to booking
+- Schema: JobPosting, LocalBusiness, FAQ, Breadcrumbs
+- Internal links to city hub, role hub, booking
+
+Content Score = (Revenue Impact 1-10) × 2 + Inverse Difficulty + Inverse Time
+Weekly cadence: 3-5 pieces, balance quick wins with strategic builds
+
+E-E-A-T:
+- Author bylines with real names, roles, LinkedIn
+- Credentials: SNA, WAADI, insurance, years in business
+- Last reviewed date (monthly updates)
+- Sources cited, testimonials with consent
+
+Technical SEO Weekly:
+1. GSC data → ranking drops, CTR anomalies
+2. Competitor movements (Ahrefs/Semrush)
+3. Crawl for broken links, redirects, orphans
+4. Core Web Vitals check
+5. Generate prioritized fix tickets
+
+Content Refresh Monthly:
+1. Identify >20% MoM traffic decay
+2. Refresh brief: new stats, FAQs, CTAs
+3. Track completion, reindex, monitor recovery
+
+AI Discoverability:
+- Citable content with stats and methodology
+- Organization schema, Wikidata, consistent NAP
+- Machine-readable manifests
+- Monitor AI citations weekly
+- Authoritative backlinks

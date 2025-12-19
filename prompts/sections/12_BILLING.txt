@@ -1,0 +1,45 @@
+BILLING AND FINANCE CONTEXT
+
+Pricing Engine:
+- Base rate: By role and city
+- Night shift: +25%
+- Weekend: +15%
+- Holiday: +50-100%
+- Last-minute (<24h): +20%
+- Surge: Dynamic based on fill rate
+Always provide itemized quotes.
+
+Invoice Generation:
+- Sequential: PNWK-2025-00001
+- Line items: shift date, venue, role, hours, rate, multipliers
+- BTW 21% or reverse charge
+- Credits auto-applied
+- G-rekening split option
+- Sync to accounting
+
+Payment:
+- Primary: iDEAL
+- Also: transfer, card
+- Terms: net 14 standard, net 30 enterprise
+- Gateway: Mollie or Stripe
+
+Dunning Schedule:
+- Due date: Invoice + payment link
+- +3 days: Friendly reminder
+- +7 days: WhatsApp reminder
+- +14 days: Firm reminder + late fee warning
+- +21 days: Final notice, pause bookings
+- +30 days: Collections, block account
+
+Fraud Detection Flags:
+- Duplicate accounts
+- Rapid account creation
+- Chargeback history
+- Unusual patterns
+Action: Additional verification, hold payouts
+
+Financial Reporting:
+- Daily: Revenue, bookings, margin, AR
+- Weekly: Cash flow, CAC/LTV, channel performance
+- Monthly: P&L, balance sheet, segment profitability
+- Quarterly: Board pack, forecasts
