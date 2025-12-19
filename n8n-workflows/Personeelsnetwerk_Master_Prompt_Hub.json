@@ -1,0 +1,739 @@
+{
+  "name": "Personeelsnetwerk Master Prompt Hub v2.0",
+  "description": "Multi-AI orchestration with master prompt context injection for Dutch horeca staffing",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "personeelsnetwerk-ai",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "API Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "personeelsnetwerk-ai"
+    },
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 500]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-identity",
+              "name": "IDENTITY_CONTEXT",
+              "value": "You are the autonomous orchestrator for Personeelsnetwerk.com, a specialized Dutch horeca staffing agency operating in Amsterdam, Rotterdam, Den Haag, Utrecht and expansion cities. Core roles are afwassers, keukenschoonmaak, housekeeping, cooks, kitchen staff. You enforce alignment with profitability, speed, risk control and compliance at all times. You represent Personeelsnetwerk as the fastest, most reliable, most compliant horeca staffing partner in the Netherlands.\n\nNorth star metric: Profitable filled shifts (margin-positive, no SLA breach)\nKey metrics: Time to fill <4h, Fill rate >95%, Gross margin >25%, Client LTV >€5000, CAC <€200",
+              "type": "string"
+            },
+            {
+              "id": "id-compliance",
+              "name": "COMPLIANCE_CONTEXT",
+              "value": "COMPLIANCE REQUIREMENTS:\n- WAADI registration: Maintained, displayed on website and invoices\n- SNA certification: Maintained with annual audits\n- CAO compliance: Wages, hours, holiday pay per collective agreement\n- GDPR: Controller for staff and client data, processor agreements required\n- Consent required before any outbound communication\n- Report security incidents within 24 hours\n\nAlways verify WAADI/SNA compliance. Apply correct CAO rates. Document all data processing.",
+              "type": "string"
+            },
+            {
+              "id": "id-operations",
+              "name": "OPERATIONS_CONTEXT",
+              "value": "OPERATIONS:\nShift Fill Tiers: 1) Auto-match (reliability×skills×location×cost) → 2) WhatsApp broadcast (15 min) → 3) Partner network → 4) Human dispatcher\n\nCommunication: Offer (instant) → Confirm (instant) → Reminder (24h) → Reminder (2h) → Feedback (post-shift)\n\nNo-Show Risk: Score 0-100 based on attendance, distance, weather, day, role. >70 = add standby, >85 = human review\n\nStaff Score: Attendance (40%) + Punctuality (30%) + Cancellation (20%) + Feedback (10%)\n\nSLA: Response within 4 hours, credit for breaches",
+              "type": "string"
+            },
+            {
+              "id": "id-sales",
+              "name": "SALES_CONTEXT",
+              "value": "LEAD GENERATION:\nLead Scoring: Intent (40%) + Engagement (30%) + Firmographics (20%) + Behavior (10%)\nRouting: Score ≥80 = Hot (call in 5 min), 50-79 = Warm (SDR sequence), <50 = Nurture\n\nSDR Sequence: Day 1 email → Day 3 LinkedIn → Day 5 case study → Day 7 WhatsApp → Day 10 final\n\nSales angles: Speed, compliance, cost savings, reliability\nROI math: No-show costs + management time vs. our fee\nClosing: Trial shift offer, volume discounts",
+              "type": "string"
+            },
+            {
+              "id": "id-content",
+              "name": "CONTENT_CONTEXT",
+              "value": "CONTENT AND SEO:\nPages: City hubs (/amsterdam), Role hubs (/afwasser), Combined (/amsterdam/afwasser), Urgent (/spoed/city/role)\n\nProgrammatic pages need: Local intro, stats, requirements, testimonials, availability widget, CTA, schema markup\n\nE-E-A-T: Author bylines, credentials (SNA, WAADI), review dates, cited sources, real testimonials\n\nWeekly cadence: 3-5 pieces, balance quick wins with strategic builds",
+              "type": "string"
+            },
+            {
+              "id": "id-billing",
+              "name": "BILLING_CONTEXT",
+              "value": "BILLING:\nPricing: Base rate by role/city. Night +25%, Weekend +15%, Holiday +50-100%, Last-minute +20%, Surge dynamic\n\nInvoice: PNWK-2025-XXXXX, itemized, BTW 21%, G-rekening option\nPayment: iDEAL primary, net 14 standard, net 30 enterprise\n\nDunning: Due → +3 friendly → +7 WhatsApp → +14 firm + late fee → +21 pause → +30 collections",
+              "type": "string"
+            },
+            {
+              "id": "id-whatsapp",
+              "name": "WHATSAPP_CONTEXT",
+              "value": "WHATSAPP COMMUNICATIONS:\nTemplates: Booking confirmation, Shift reminder (24h), Feedback request, No-show warning, Opt-in confirmation\n\nCompliance: Templates pre-approved, session messages within 24h window only, explicit opt-in required, opt-out honored immediately\n\nPriority: Urgent → Transactional → Marketing\nFallback: WhatsApp → SMS → Phone call\n\nTone: Professional but friendly, Dutch language, clear and actionable",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "context-store",
+      "name": "Master Prompt Context Store",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 400]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "task-type",
+              "name": "taskType",
+              "value": "={{ $json.body?.taskType || $json.taskType || 'general' }}",
+              "type": "string"
+            },
+            {
+              "id": "user-prompt",
+              "name": "userPrompt",
+              "value": "={{ $json.body?.prompt || $json.prompt || 'Describe the current status of Personeelsnetwerk operations' }}",
+              "type": "string"
+            },
+            {
+              "id": "model-pref",
+              "name": "preferredModel",
+              "value": "={{ $json.body?.model || $json.model || 'auto' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "extract-request",
+      "name": "Extract Request",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [440, 400]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "compliance",
+                    "operator": {"type": "string", "operation": "equals"}
+                  }
+                ]
+              },
+              "outputKey": "compliance"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "sales",
+                    "operator": {"type": "string", "operation": "equals"}
+                  }
+                ]
+              },
+              "outputKey": "sales"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "operations",
+                    "operator": {"type": "string", "operation": "equals"}
+                  }
+                ]
+              },
+              "outputKey": "operations"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "content",
+                    "operator": {"type": "string", "operation": "equals"}
+                  }
+                ]
+              },
+              "outputKey": "content"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "billing",
+                    "operator": {"type": "string", "operation": "equals"}
+                  }
+                ]
+              },
+              "outputKey": "billing"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.taskType }}",
+                    "rightValue": "whatsapp",
+                    "operator": {"type": "string", "operation": "equals"}
+                  }
+                ]
+              },
+              "outputKey": "whatsapp"
+            }
+          ]
+        },
+        "fallbackOutput": "general"
+      },
+      "id": "task-router",
+      "name": "Route by Task Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [660, 400]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "system-prompt",
+              "name": "systemPrompt",
+              "value": "={{ $('Master Prompt Context Store').first().json.IDENTITY_CONTEXT }}\n\n{{ $('Master Prompt Context Store').first().json.COMPLIANCE_CONTEXT }}",
+              "type": "string"
+            },
+            {
+              "id": "model",
+              "name": "model",
+              "value": "claude",
+              "type": "string"
+            },
+            {
+              "id": "reason",
+              "name": "modelReason",
+              "value": "Compliance tasks require nuanced judgment - using Claude",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "compliance-context",
+      "name": "Compliance Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, 100]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "system-prompt",
+              "name": "systemPrompt",
+              "value": "={{ $('Master Prompt Context Store').first().json.IDENTITY_CONTEXT }}\n\n{{ $('Master Prompt Context Store').first().json.SALES_CONTEXT }}",
+              "type": "string"
+            },
+            {
+              "id": "model",
+              "name": "model",
+              "value": "chatgpt",
+              "type": "string"
+            },
+            {
+              "id": "reason",
+              "name": "modelReason",
+              "value": "Sales content and outreach - using ChatGPT for volume",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "sales-context",
+      "name": "Sales Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, 250]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "system-prompt",
+              "name": "systemPrompt",
+              "value": "={{ $('Master Prompt Context Store').first().json.IDENTITY_CONTEXT }}\n\n{{ $('Master Prompt Context Store').first().json.OPERATIONS_CONTEXT }}",
+              "type": "string"
+            },
+            {
+              "id": "model",
+              "name": "model",
+              "value": "chatgpt",
+              "type": "string"
+            },
+            {
+              "id": "reason",
+              "name": "modelReason",
+              "value": "Operations tasks - using ChatGPT for efficiency",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "operations-context",
+      "name": "Operations Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, 400]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "system-prompt",
+              "name": "systemPrompt",
+              "value": "={{ $('Master Prompt Context Store').first().json.IDENTITY_CONTEXT }}\n\n{{ $('Master Prompt Context Store').first().json.CONTENT_CONTEXT }}",
+              "type": "string"
+            },
+            {
+              "id": "model",
+              "name": "model",
+              "value": "chatgpt",
+              "type": "string"
+            },
+            {
+              "id": "reason",
+              "name": "modelReason",
+              "value": "Content creation - using ChatGPT for creative tasks",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "content-context",
+      "name": "Content Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, 550]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "system-prompt",
+              "name": "systemPrompt",
+              "value": "={{ $('Master Prompt Context Store').first().json.IDENTITY_CONTEXT }}\n\n{{ $('Master Prompt Context Store').first().json.BILLING_CONTEXT }}",
+              "type": "string"
+            },
+            {
+              "id": "model",
+              "name": "model",
+              "value": "gemini",
+              "type": "string"
+            },
+            {
+              "id": "reason",
+              "name": "modelReason",
+              "value": "Billing/data tasks - using Gemini for cost efficiency",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "billing-context",
+      "name": "Billing Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, 700]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "system-prompt",
+              "name": "systemPrompt",
+              "value": "={{ $('Master Prompt Context Store').first().json.IDENTITY_CONTEXT }}\n\n{{ $('Master Prompt Context Store').first().json.WHATSAPP_CONTEXT }}",
+              "type": "string"
+            },
+            {
+              "id": "model",
+              "name": "model",
+              "value": "chatgpt",
+              "type": "string"
+            },
+            {
+              "id": "reason",
+              "name": "modelReason",
+              "value": "WhatsApp templates - using ChatGPT for communications",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "whatsapp-context",
+      "name": "WhatsApp Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, 850]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "system-prompt",
+              "name": "systemPrompt",
+              "value": "={{ $('Master Prompt Context Store').first().json.IDENTITY_CONTEXT }}",
+              "type": "string"
+            },
+            {
+              "id": "model",
+              "name": "model",
+              "value": "chatgpt",
+              "type": "string"
+            },
+            {
+              "id": "reason",
+              "name": "modelReason",
+              "value": "General task - using ChatGPT as default",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "general-context",
+      "name": "General Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [880, 1000]
+    },
+    {
+      "parameters": {},
+      "id": "merge-contexts",
+      "name": "Merge All Contexts",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [1100, 500]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "full-prompt",
+              "name": "fullPrompt",
+              "value": "={{ $json.systemPrompt }}\n\n---\n\nUSER REQUEST:\n{{ $('Extract Request').first().json.userPrompt }}",
+              "type": "string"
+            },
+            {
+              "id": "selected-model",
+              "name": "selectedModel",
+              "value": "={{ $('Extract Request').first().json.preferredModel === 'auto' ? $json.model : $('Extract Request').first().json.preferredModel }}",
+              "type": "string"
+            },
+            {
+              "id": "task",
+              "name": "taskType",
+              "value": "={{ $('Extract Request').first().json.taskType }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "build-prompt",
+      "name": "Build Final Prompt",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1320, 500]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.selectedModel }}",
+                    "rightValue": "claude",
+                    "operator": {"type": "string", "operation": "equals"}
+                  }
+                ]
+              },
+              "outputKey": "claude"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.selectedModel }}",
+                    "rightValue": "chatgpt",
+                    "operator": {"type": "string", "operation": "equals"}
+                  }
+                ]
+              },
+              "outputKey": "chatgpt"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.selectedModel }}",
+                    "rightValue": "gemini",
+                    "operator": {"type": "string", "operation": "equals"}
+                  }
+                ]
+              },
+              "outputKey": "gemini"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.selectedModel }}",
+                    "rightValue": "groq",
+                    "operator": {"type": "string", "operation": "equals"}
+                  }
+                ]
+              },
+              "outputKey": "groq"
+            }
+          ]
+        },
+        "fallbackOutput": "chatgpt_default"
+      },
+      "id": "model-router",
+      "name": "Route to AI Model",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1540, 500]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.fullPrompt }}",
+        "options": {
+          "systemMessage": "={{ $json.systemPrompt }}"
+        }
+      },
+      "id": "claude-agent",
+      "name": "Claude Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [1760, 200]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.fullPrompt }}",
+        "options": {
+          "systemMessage": "={{ $json.systemPrompt }}"
+        }
+      },
+      "id": "chatgpt-agent",
+      "name": "ChatGPT Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [1760, 400]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.fullPrompt }}",
+        "options": {
+          "systemMessage": "={{ $json.systemPrompt }}"
+        }
+      },
+      "id": "gemini-agent",
+      "name": "Gemini Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [1760, 600]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.fullPrompt }}",
+        "options": {
+          "systemMessage": "={{ $json.systemPrompt }}"
+        }
+      },
+      "id": "groq-agent",
+      "name": "Groq Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [1760, 800]
+    },
+    {
+      "parameters": {},
+      "id": "merge-responses",
+      "name": "Merge Responses",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [1980, 500]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "response",
+              "name": "response",
+              "value": "={{ $json.output || $json.text || $json.response }}",
+              "type": "string"
+            },
+            {
+              "id": "model-used",
+              "name": "modelUsed",
+              "value": "={{ $('Build Final Prompt').first().json.selectedModel }}",
+              "type": "string"
+            },
+            {
+              "id": "task-type",
+              "name": "taskType",
+              "value": "={{ $('Build Final Prompt').first().json.taskType }}",
+              "type": "string"
+            },
+            {
+              "id": "completed",
+              "name": "completedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "cost-tier",
+              "name": "costTier",
+              "value": "={{ ['gemini', 'groq', 'deepseek'].includes($('Build Final Prompt').first().json.selectedModel) ? 'low' : ['chatgpt', 'claude'].includes($('Build Final Prompt').first().json.selectedModel) ? 'medium' : 'high' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "format-response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2200, 500]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, response: $json.response, model: $json.modelUsed, taskType: $json.taskType, costTier: $json.costTier, timestamp: $json.completedAt }) }}",
+        "options": {}
+      },
+      "id": "webhook-response",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2420, 500]
+    }
+  ],
+  "connections": {
+    "API Trigger": {
+      "main": [[{"node": "Master Prompt Context Store", "type": "main", "index": 0}]]
+    },
+    "Manual Trigger": {
+      "main": [[{"node": "Master Prompt Context Store", "type": "main", "index": 0}]]
+    },
+    "Master Prompt Context Store": {
+      "main": [[{"node": "Extract Request", "type": "main", "index": 0}]]
+    },
+    "Extract Request": {
+      "main": [[{"node": "Route by Task Type", "type": "main", "index": 0}]]
+    },
+    "Route by Task Type": {
+      "main": [
+        [{"node": "Compliance Context", "type": "main", "index": 0}],
+        [{"node": "Sales Context", "type": "main", "index": 0}],
+        [{"node": "Operations Context", "type": "main", "index": 0}],
+        [{"node": "Content Context", "type": "main", "index": 0}],
+        [{"node": "Billing Context", "type": "main", "index": 0}],
+        [{"node": "WhatsApp Context", "type": "main", "index": 0}],
+        [{"node": "General Context", "type": "main", "index": 0}]
+      ]
+    },
+    "Compliance Context": {
+      "main": [[{"node": "Merge All Contexts", "type": "main", "index": 0}]]
+    },
+    "Sales Context": {
+      "main": [[{"node": "Merge All Contexts", "type": "main", "index": 0}]]
+    },
+    "Operations Context": {
+      "main": [[{"node": "Merge All Contexts", "type": "main", "index": 0}]]
+    },
+    "Content Context": {
+      "main": [[{"node": "Merge All Contexts", "type": "main", "index": 0}]]
+    },
+    "Billing Context": {
+      "main": [[{"node": "Merge All Contexts", "type": "main", "index": 0}]]
+    },
+    "WhatsApp Context": {
+      "main": [[{"node": "Merge All Contexts", "type": "main", "index": 0}]]
+    },
+    "General Context": {
+      "main": [[{"node": "Merge All Contexts", "type": "main", "index": 0}]]
+    },
+    "Merge All Contexts": {
+      "main": [[{"node": "Build Final Prompt", "type": "main", "index": 0}]]
+    },
+    "Build Final Prompt": {
+      "main": [[{"node": "Route to AI Model", "type": "main", "index": 0}]]
+    },
+    "Route to AI Model": {
+      "main": [
+        [{"node": "Claude Agent", "type": "main", "index": 0}],
+        [{"node": "ChatGPT Agent", "type": "main", "index": 0}],
+        [{"node": "Gemini Agent", "type": "main", "index": 0}],
+        [{"node": "Groq Agent", "type": "main", "index": 0}],
+        [{"node": "ChatGPT Agent", "type": "main", "index": 0}]
+      ]
+    },
+    "Claude Agent": {
+      "main": [[{"node": "Merge Responses", "type": "main", "index": 0}]]
+    },
+    "ChatGPT Agent": {
+      "main": [[{"node": "Merge Responses", "type": "main", "index": 0}]]
+    },
+    "Gemini Agent": {
+      "main": [[{"node": "Merge Responses", "type": "main", "index": 0}]]
+    },
+    "Groq Agent": {
+      "main": [[{"node": "Merge Responses", "type": "main", "index": 0}]]
+    },
+    "Merge Responses": {
+      "main": [[{"node": "Format Response", "type": "main", "index": 0}]]
+    },
+    "Format Response": {
+      "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "version": "2.0",
+    "description": "Multi-AI orchestration hub with master prompt context injection. Routes tasks to optimal AI model based on task type and cost optimization."
+  }
+}
